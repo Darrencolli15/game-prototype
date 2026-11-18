@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#142722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Collect a woodland squad, merge cards, and take down four chapter bosses.">
+<link rel="apple-touch-icon" href="./png/icon.png">
+<link rel="manifest" href="./game.webmanifest">
+<link rel="stylesheet" href="./css/style.css">
+<title>Bramble Brigade</title>
+</head>
+<body>
+<main class="shell">
+  <header class="masthead">
+    <div class="identity"><img src="./png/icon.png" alt=""><h1>Bramble<br>Brigade</h1></div>
+    <div class="wallet"><button type="button" class="currency" data-offer="com.bramblebrigade.gold.pouch" aria-label="Gold shop"><img class="ui-icon" src="./icons/gold.svg" alt=""> <b id="walletAcorns">0</b><i>+</i></button><button type="button" class="currency" data-offer="com.bramblebrigade.gems.pouch" aria-label="Gem shop"><img class="ui-icon" src="./icons/gem.svg" alt=""> <b id="walletGems">0</b><i>+</i></button><button type="button" class="sound-toggle" id="soundToggle" aria-pressed="true" aria-label="Game sound">♪</button></div>
+  </header>
+  <div class="experience" aria-label="Player experience"><strong id="playerLevel">Lv 1</strong><progress id="xpBar" value="0" max="20" aria-label="XP to next level"></progress><span id="xpText">0 / 20 XP</span><button type="button" class="xp-chest" id="xpChest" data-chest-info="level" aria-label="Next level chest"><img src="./icons/chest-level.svg" alt=""><b id="xpChestCount" hidden></b></button></div>
+  <div id="subNav" hidden><button class="small" data-page="campaign" aria-label="Back to Home">‹ Home</button><div id="pageDots"></div></div>
+
+  <section id="campaign" class="page">
+    <div id="map">
+      <div id="levels" class="levels"></div>
+      <button type="button" class="home-pass" id="homePass" aria-haspopup="dialog" aria-label="Open Woodland Pass">
+        <span class="pass-emblem"><img src="./icons/pass.svg" alt=""></span>
+        <span class="home-pass-copy"><strong>Pass</strong><small id="homePassHint"></small><progress id="homePassProgress" max="12" value="0" aria-label="Points to next pass tier"></progress></span>
+        <sup id="passCount" hidden></sup><span class="home-pass-arrow" aria-hidden="true">›</span>
+      </button>
+
+      <button id="matchChest" class="match-chest" type="button" data-page="shop"><img class="ui-icon" src="./icons/chest-trail.svg" alt=""><span><strong>Trail</strong><small id="matchChestLabel"></small></span><span id="matchPips" class="match-pips" aria-hidden="true"></span></button>
+      <div id="mastery" hidden></div>
+      <div class="gateways"><button id="arenaGate" aria-haspopup="dialog"><img src="./png/relic0.png" alt=""><strong>Arenas</strong><span>›</span></button><button id="modeGate" aria-haspopup="dialog"><img src="./png/spell-spark.png" alt=""><strong>Modes</strong><span>›</span></button></div>
+  <nav class="tabs" aria-label="Game screens">
+    <button type="button" data-page="campaign" aria-current="page"><b>⚑</b> Campaign</button>
+    <button type="button" data-page="collection" aria-label="Troops"><b>▣</b><sup id="mergeCount" hidden></sup></button>
+    <button type="button" data-page="spells" aria-label="Abilities"><b>✧</b></button>
+    <button type="button" data-page="event" aria-label="Events"><b>♜</b></button>
+    <button type="button" data-page="shop" aria-label="Shop"><b>◇</b><sup id="chestCount" hidden></sup></button>
+  </nav>
+    </div>
+    <section id="combat" aria-label="Battle" hidden>
+      <div class="battle-head"><button id="leaveBattle" class="small" type="button">‹ Trail</button><div><p id="battleZone"></p><h2 id="battleTitle"></h2></div><div class="battle-tools"><button id="tempo" class="small" type="button" aria-label="Double battle speed" aria-pressed="false" hidden>1×</button><button id="pause" class="small" type="button" aria-label="Pause battle">Ⅱ</button></div></div>
+      <div class="arena">
+        <canvas id="scene" width="1000" height="670" aria-hidden="true"></canvas>
+        <div class="health">
+          <div aria-label="Your burrow"><span><i aria-hidden="true">🏡</i><b id="allyNumber"></b></span><progress id="allyHp" value="1" max="1" aria-label="Your burrow health"></progress></div>
+          <span id="battleTime"></span>
+          <div aria-label="Enemy fort"><span><i aria-hidden="true">🏰</i><b id="enemyNumber"></b></span><progress id="enemyHp" value="1" max="1" aria-label="Enemy fort health"></progress></div>
+        </div>
+        <div id="notice" aria-live="polite"></div><div id="siegeStatus" aria-label="Thorn siege timer"></div><div id="waveStatus"></div>
+        <div id="battleOverlay" hidden><div class="dialog"><h3 id="battleMessage"></h3><p id="battleDetail"></p><div id="battleLoot"></div><div id="battlePeek" hidden></div><button id="battleAction" class="primary" type="button"></button></div></div>
+      </div>
+      <div class="sap">
+        <div class="sap-readout"><div><b>♦ Sap</b><strong id="sapValue"></strong></div><progress id="sapBar" value="0" max="20" aria-label="Sap reserve"></progress><small id="sapRate"></small></div>
+        <button id="upgradeSap" class="pump" type="button" aria-label="Upgrade sap pump"><span class="pump-icon" aria-hidden="true">↟</span><span><strong id="pumpName">Taproot</strong><small id="sapUpgradeDetail"></small></span><b id="sapUpgradeCost"></b></button>
+      </div>
+      <div id="hand" class="hand"></div>
+      <div id="battleSpells" class="battle-spells" aria-label="Battle abilities"></div>
+    </section>
+  </section>
+
+  <section id="collection" class="page" hidden>
+    <div class="section-title"><h2>Troops</h2></div>
+    <div id="deck" class="deck" aria-label="Current deck"></div>
+    <p id="deckPrompt" class="hint" aria-live="polite"></p>
+    <div id="rarityFilters" class="rarity-filters" aria-label="Filter troop rarity"></div>
+    <div id="collectionCards" class="collection-grid"></div>
+  </section>
+
+  <section id="spells" class="page" hidden>
+    <div class="section-title"><h2>Abilities</h2><p id="spellEquipHint"></p></div>
+    <div id="spellDeck" class="deck spell-deck" aria-label="Equipped abilities"></div>
+    <div id="abilities" class="ability-list"></div>
+  </section>
+
+  <section id="event" class="page" hidden>
+    <div id="eventHero" class="hero event-hero">
+      <div><span>Weekly challenge</span><h2 id="eventTitle"></h2><p id="eventClock"></p></div>
+      <img id="eventArt" src="./png/boss0.png" alt="">
+    </div>
+    <button class="primary event-start" id="startEvent" type="button">Fight boss ›</button>
+    <div class="event-summary"><span aria-label="Best survival"><img class="ui-icon" src="./icons/clock.svg" alt=""><small>⏱</small><b id="eventTime"></b></span><span aria-label="Best damage"><img class="ui-icon" src="./icons/target.svg" alt=""><small>⚔</small><b id="eventDamage"></b></span></div>
+    <div id="eventTiers" class="levels"></div>
+  </section>
+
+  <section id="shop" class="page" hidden>
+    <div class="section-title"><h2>Shop</h2></div>
+    <div id="chests" class="chest-grid"></div>
+    <div class="section-title compact"><h3>Daily cards</h3><p id="stockClock"></p></div>
+    <div id="trader" class="offers"></div>
+    <div class="section-title compact"><h3>Premium</h3><p id="paymentHelp"></p></div>
+    <div id="weeklyOffer"></div>
+    <div id="premium" class="offers"></div>
+    <div class="section-title compact"><h3>Power-ups</h3><button id="restoreStore" class="small" type="button" hidden>Restore</button></div>
+    <div id="boosts" class="offers"></div>
+  </section>
+  <div id="status" role="status" aria-live="polite"></div>
+</main>
+  <dialog id="trailSheet" aria-labelledby="sheetTitle"><header><h2 id="sheetTitle">Arenas</h2><button id="closeSheet" class="small" aria-label="Close">×</button></header><div id="arenaList"></div><div id="sideModes"></div>      <details id="pastBattles" hidden><summary>↶ Replay</summary><div id="historyLevels" class="levels"></div></details></dialog>
+  <dialog id="pass" aria-labelledby="passHeading">
+    <div class="pass-dialog-top"><button type="button" id="closePass" class="small" autofocus>‹ Campaign</button></div>
+    <div class="hero pass-hero"><div><span id="passTime"></span><h2 id="passHeading">Woodland Pass</h2><p id="passScore"></p></div><img src="./icons/pass.svg" alt=""></div>
+    <div class="pass-progress"><progress id="passProgress" max="8" value="0" aria-label="Pass progress"></progress><button class="small" type="button" data-pass-info aria-label="How to earn pass points">ⓘ</button></div>
+    <div id="passAction"></div>
+    <div id="passBonus"></div>
+    <div class="pass-head"><span>Tier</span><b>Free</b><b>Premium</b></div>
+    <div id="passTrack" class="pass-track"></div>
+  </dialog>
+
+<dialog id="rewardDialog"><form method="dialog"><h2 id="rewardTitle"></h2><div id="rewardArt" hidden></div><div id="rewardCards"></div><button type="submit" class="primary">Collect</button></form></dialog>
+<script src="./js/campaign.js"></script>
+<dialog id="detailDialog"><div id="detailContent"></div></dialog>
+<script src="./js/economy.js"></script>
+<script src="./js/battle.js"></script>
+<script src="./js/art.js"></script>
+<script src="./js/sound.js"></script>
+<script src="./js/game.js"></script>
+</body>
+</html>
